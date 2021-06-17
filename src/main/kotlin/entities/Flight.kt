@@ -1,4 +1,4 @@
-package storage.entities
+package entities
 
 data class Flight(
     val id: String,

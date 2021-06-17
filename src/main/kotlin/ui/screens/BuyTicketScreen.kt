@@ -1,5 +1,7 @@
 package ui.screens
 
+import ControlClass
+import IController
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,14 +18,13 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import storage.AirportDatabase
-import storage.entities.Ticket
+import entities.Ticket
 import ui.Screen
 
 @ExperimentalComposeUiApi
 object BuyTicketScreen : Screen {
 
-    private val db = AirportDatabase
+    private val controller: IController = ControlClass()
 
     @ExperimentalMaterialApi
     @Composable
@@ -38,7 +39,7 @@ object BuyTicketScreen : Screen {
             ) {
                 if (chosenFlight == null) {
                     Text(text = "Выберите рейс:", style = MaterialTheme.typography.h6)
-                    var flights by remember { mutableStateOf(db.getFlights()) }
+                    var flights by remember { mutableStateOf(controller.getFlights()) }
                     Spacer(Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -68,7 +69,7 @@ object BuyTicketScreen : Screen {
                         Spacer(Modifier.weight(0.033f))
                         Button(
                             onClick = {
-                                flights = db.getByParameters {
+                                flights = controller.getFlightsByParameter {
                                     departureFilter.isEmpty().xor(it.departure == departureFilter) &&
                                             arrivalFilter.isEmpty().xor(it.arrival == arrivalFilter) &&
                                             aircraftFilter.isEmpty().xor(it.aircraft == aircraftFilter)
@@ -98,7 +99,7 @@ object BuyTicketScreen : Screen {
                     var done by remember { mutableStateOf(false) }
                     Text(text = "Рейс:", style = MaterialTheme.typography.h6)
                     Spacer(Modifier.height(16.dp))
-                    FlightsScreen.FlightRow(db.getById(ticket.flightId)!!, MaterialTheme.typography.body2)
+                    FlightsScreen.FlightRow(controller.getById(ticket.flightId)!!, MaterialTheme.typography.body2)
                     Spacer(Modifier.height(16.dp))
                     Column(
                         modifier = Modifier.weight(0.5f)
@@ -129,6 +130,13 @@ object BuyTicketScreen : Screen {
                             ticket.passportNumber = it
                         }
                         Spacer(Modifier.height(16.dp))
+                        Input(
+                            label = "Электронная почта",
+                            value = ticket.email ?: ""
+                        ) {
+                            ticket.email = it
+                        }
+                        Spacer(Modifier.height(16.dp))
                         var error by remember { mutableStateOf(false) }
                         if (error) {
                             Text(text = "Все поля должны быть заполнены!", color = MaterialTheme.colors.error)
@@ -137,13 +145,14 @@ object BuyTicketScreen : Screen {
                         Button(onClick = {
                             error = !ticket.isComplete()
                             done = ticket.isComplete()
-                            db.addTicket(ticket)
+                            controller.buyTicket(ticket)
                         }) {
                             Text("Купить")
                         }
                         if (done) {
+                            Spacer(Modifier.height(16.dp))
                             Text(
-                                "Билет успешно приобретен!",
+                                "Билет №${ticket.id} успешно приобретен и будет выслан на указанную почту!",
                                 style = MaterialTheme.typography.h4,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center

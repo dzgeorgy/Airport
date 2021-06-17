@@ -1,5 +1,7 @@
 package ui.screens
 
+import ControlClass
+import IController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,14 +15,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import storage.AirportDatabase
-import storage.entities.Flight
+import entities.Flight
 import ui.Screen
 
 @ExperimentalMaterialApi
 object FlightsScreen : Screen {
 
-    private val db = AirportDatabase
+    private val controller: IController = ControlClass()
 
     @ExperimentalMaterialApi
     @Composable
@@ -33,7 +34,7 @@ object FlightsScreen : Screen {
                 modifier = Modifier.fillMaxSize().verticalScroll(scroll).padding(8.dp).background(Color.Transparent)
             ) {
                 TableHeader()
-                db.getFlights().forEach {
+                controller.getFlights().forEach {
                     FlightRow(it)
                 }
             }

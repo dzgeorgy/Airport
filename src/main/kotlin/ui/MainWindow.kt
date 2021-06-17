@@ -45,7 +45,7 @@ class MainWindow {
         size = IntSize(WIDTH, HEIGHT)
     ) {
         AirportTheme {
-            var mode: Mode by remember { mutableStateOf(Mode.BUY_TICKET) }
+            var mode: Mode by remember { mutableStateOf(Mode.FLIGHTS) }
             Column {
                 Row(
                     modifier = Modifier.weight(0.95f, true)

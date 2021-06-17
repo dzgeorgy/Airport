@@ -1,8 +1,8 @@
 package storage
 
 import Logger
-import storage.entities.Flight
-import storage.entities.Ticket
+import entities.Flight
+import entities.Ticket
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
