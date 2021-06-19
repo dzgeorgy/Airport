@@ -145,7 +145,7 @@ object BuyTicketScreen : Screen {
                         Button(onClick = {
                             error = !ticket.isComplete()
                             done = ticket.isComplete()
-                            controller.buyTicket(ticket)
+                            if (done) controller.buyTicket(ticket)
                         }) {
                             Text("Купить")
                         }
